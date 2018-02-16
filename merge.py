@@ -2,7 +2,12 @@ import errno
 import os
 import shutil
 
-from tqdm import tqdm
+# For robustness, if tqdm not installed
+try:
+    from tqdm import tqdm
+except Exception as e:
+    def tqmd(iter, *args, **kwargs):
+        return iter
 
 
 def merge_audio_video(combinations, video_files_path):
