@@ -87,6 +87,8 @@ class DateBasedOrganizer:
         :return: List of lists of records.
         """
         record_groups = []
+        if len(records) == 0:
+            return record_groups
         active_record = records.pop(0)
         active_group = [active_record]
 
