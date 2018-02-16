@@ -1,9 +1,6 @@
 import logging
 from os import walk
-from os.path import isfile, isdir, join, splitext
-
-from numpy.core.numeric import extend_all
-
+from os.path import isdir, join, splitext
 from util import *
 
 logger = logging.getLogger(__name__)
