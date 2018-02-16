@@ -1,0 +1,3 @@
+video_dir=tests/data/video
+audio_dir=tests/data/audio
+output_dir=tests/results

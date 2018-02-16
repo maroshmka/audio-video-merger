@@ -2,10 +2,11 @@ import argparse
 import logging
 from datetime import datetime
 from os import mkdir
-from os.path import dirname, join, isdir
+from os.path import dirname, join, isdir, isfile
 
 from loader import DateBasedOrganizer, get_record_filenames
 from merge import move_files, copy_files
+from util import load_config, inject_config_if_missing
 
 # Setup logging
 if not isdir('log'):
@@ -19,7 +20,7 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s [%(name)-10.10s] [%(levelname)-5.5s]  %(message)s',
+                    format='%(asctime)s [%(name)-10.10s] [%(levelname)-7.7s]  %(message)s',
                     handlers=[file_handler, console_handler])
 
 logger = logging.getLogger(__name__)
@@ -59,10 +60,10 @@ if __name__ == '__main__':
     logger.debug('Asi budes zmäteny z toho ze raz pisem po slovensky'
                  'a raz po anglicky. Nezufaj!')
     parser = argparse.ArgumentParser()
-    parser.add_argument('video_dir', type=str,
+    parser.add_argument('video_dir', type=str, nargs='?',
                         help='Toto je zlozka kde mas videjka.')
 
-    parser.add_argument('audio_dir', type=str,
+    parser.add_argument('audio_dir', type=str, nargs='?',
                         help='Toto je zlozka kde mas videjka.')
 
     parser.add_argument('output_dir', type=str, nargs='?', default=None,
@@ -73,5 +74,17 @@ if __name__ == '__main__':
                         help='Ci to chces premiestnit miesto kopirovania.')
 
     args = parser.parse_args()
+
+    config = {}
+    try:
+        config = load_config()
+    except FileNotFoundError:
+        logger.warning('Nemas este nastaveny \'config.txt\' file!'
+                       ' Vytvor kopiu \'config.txt.template\', premenuj'
+                       ' ju na \'config.txt\' a uprav parametre v nom.')
+
+    inject_config_if_missing(args, config, 'video_dir', logger)
+    inject_config_if_missing(args, config, 'audio_dir', logger)
+    inject_config_if_missing(args, config, 'output_dir', logger)
 
     run(args.video_dir, args.audio_dir, args.output_dir, args.move)

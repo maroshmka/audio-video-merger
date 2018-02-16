@@ -70,6 +70,27 @@ def get_encoded_date_in_sec(filename):
 
     return datetime.strptime(match.group(1), '%Y-%m-%d %H:%M:%S').timestamp()
 
+
+def load_config():
+    with open('config.txt', 'r') as f:
+        config = {}
+        for line in f.readlines():
+            item = line.strip().split('=')
+            config[item[0]] = item[1]
+        return config
+
+
+def inject_config_if_missing(args, config, config_name, logger):
+    if getattr(args, config_name) is None:
+        if (config_name not in config.keys()) or \
+                (config[config_name] == '') or \
+                (config[config_name][0] == '<'):
+            logger.error('Nastav \'%s\' ty baran!' % config_name)
+            exit(1)
+        setattr(args, config_name, config[config_name])
+
+
+
 # NOTE: When labeling of records will be decided
 #
 # def get_input_file_time_format():
