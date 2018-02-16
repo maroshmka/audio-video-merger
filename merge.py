@@ -2,6 +2,8 @@ import errno
 import os
 import shutil
 
+from tqdm import tqdm
+
 
 def merge_audio_video(combinations, video_files_path):
 
@@ -44,7 +46,7 @@ def move_files(dest_paths):
                        file locations.
     :return: Nothing
     """
-    for src_path, dest_path in dest_paths.items():
+    for src_path, dest_path in tqdm(dest_paths.items(), desc='Moving', unit='file'):
         makedirs_if_needed(dest_path)
         shutil.move(src_path, dest_path)
 
@@ -57,6 +59,6 @@ def copy_files(dest_paths):
                        file locations.
     :return: Nothing
     """
-    for src_path, dest_path in dest_paths.items():
+    for src_path, dest_path in tqdm(dest_paths.items(), desc='Copying', unit='file'):
         makedirs_if_needed(dest_path)
         shutil.copy(src_path, dest_path)
