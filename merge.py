@@ -1,5 +1,13 @@
+import errno
 import os
 import shutil
+
+# For robustness, if tqdm not installed
+try:
+    from tqdm import tqdm
+except Exception as e:
+    def tqmd(iter, *args, **kwargs):
+        return iter
 
 
 def merge_audio_video(combinations, video_files_path):
@@ -23,3 +31,39 @@ def merge_audio_video(combinations, video_files_path):
         # move/copy ? file
         shutil.move(audio_path, new_audio_path)
         shutil.move(video_path, new_video_path)
+
+
+def makedirs_if_needed(filepath):
+    dirname = os.path.dirname(filepath)
+    if not os.path.exists(dirname):
+        try:
+            os.makedirs(dirname)
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+
+def move_files(dest_paths):
+    """
+    Move files to destination file locations
+    and create new folders if needed.
+    :param dest_paths: Dict of destination
+                       file locations.
+    :return: Nothing
+    """
+    for src_path, dest_path in tqdm(dest_paths.items(), desc='Moving', unit='file'):
+        makedirs_if_needed(dest_path)
+        shutil.move(src_path, dest_path)
+
+
+def copy_files(dest_paths):
+    """
+    Copy files to destination file locations
+    and create new folders if needed.
+    :param dest_paths: Dict of destination
+                       file locations.
+    :return: Nothing
+    """
+    for src_path, dest_path in tqdm(dest_paths.items(), desc='Copying', unit='file'):
+        makedirs_if_needed(dest_path)
+        shutil.copy(src_path, dest_path)
