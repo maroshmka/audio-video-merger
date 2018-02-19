@@ -1,6 +1,11 @@
+altgraph==0.15
 attrs==17.4.0
+future==0.16.0
+macholib==1.9
+pefile==2017.11.5
 pluggy==0.6.0
 py==1.5.2
+PyInstaller==3.3.1
 pytest==3.3.1
 six==1.11.0
-tqdm>=4.19.4
+tqdm==4.19.5

@@ -113,3 +113,5 @@ spark-warehouse
 
 results
 .config
+.DS_STORE
+
