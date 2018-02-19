@@ -16,12 +16,8 @@ interface Organizer:
     get_dest_paths(record_files, output_dir)
         Return dict of destination file locations
         for record files in the output_dir.
+        Example: {'/original/filename1': '/new/filename', ...}
 """
-
-"""
-Mandatory keys in mapping dict.
-"""
-MAPPING_PROPS = {'old_path', 'new_path'}
 
 
 class DateBasedOrganizer:
@@ -32,8 +28,8 @@ class DateBasedOrganizer:
 
     class Record:
         """Util struct for working with record data."""
-        def __init__(self, filename, creation_time, duration):
-            self.filename = filename
+        def __init__(self, filepath, creation_time, duration):
+            self.filepath = filepath
             self.creation_time = creation_time
             self.duration = duration
             self.finish_time = creation_time + duration
@@ -42,33 +38,28 @@ class DateBasedOrganizer:
             return ((self.creation_time < record.finish_time) and
                     (record.creation_time < self.finish_time))
 
-    def __init__(self, input_file=None):
-        # Input file will be needed for annotations
-        # self.input_file = input_file
-        pass
-
-    def _create_sorted_records(self, record_filenames):
+    def _create_sorted_records(self, record_filepaths):
         """
         Create list of DateBasedOrganizer.Record objects
         sorted by creation date.
         """
         records = []
-        for filename in record_filenames:
+        for filepath in record_filepaths:
             try:
-                creation_time = get_encoded_date_in_sec(filename)
+                creation_time = get_encoded_date_in_sec(filepath)
             except NoEncodedDateException:
                 logger.warning('Using \"creation / last modified '
                                'time\" for file \'%s\'!\n'
                                'Reason: The file does not contain \"Encoded'
                                ' Date\" metadata!\n')
-                creation_time = get_creation_time_in_sec(filename)
+                creation_time = get_creation_time_in_sec(filepath)
             except FileNotFoundError as e:
                 logger.error(str(e))
                 creation_time = None
             finally:
                 if creation_time is not None:
-                    record = self.Record(filename, creation_time,
-                                         get_duration_in_sec(filename))
+                    record = self.Record(filepath, creation_time,
+                                         get_duration_in_sec(filepath))
                     records.append(record)
 
         records = sorted(records, key=lambda rec: rec.creation_time)
@@ -84,8 +75,12 @@ class DateBasedOrganizer:
         :return: List of lists of records.
         """
         record_groups = []
+
+        # Prevent IndexError in `records.pop(0)`
         if len(records) == 0:
             return record_groups
+
+        # Init active_group with first record
         active_record = records.pop(0)
         active_group = [active_record]
 
@@ -105,6 +100,7 @@ class DateBasedOrganizer:
                 active_group = [record]
                 active_record = record
 
+        # Append last group
         record_groups.append(active_group)
 
         return record_groups
@@ -119,7 +115,8 @@ class DateBasedOrganizer:
         """
         if len(record_groups) >= 1000:
             raise NotImplementedError('This method generates'
-                                      'only 3 digit filenames!')
+                                      'only 3 digit dirnames'
+                                      'for record_group!')
 
         dest_paths = {}
 
@@ -127,7 +124,7 @@ class DateBasedOrganizer:
             folder_name = '%03d' % i
 
             for record in record_group:
-                dest_paths[record.filename] = join(output_dir, folder_name, os.path.basename(record.filename))
+                dest_paths[record.filepath] = join(output_dir, folder_name, os.path.basename(record.filepath))
 
         return dest_paths
 
@@ -172,11 +169,11 @@ def is_record(file):
     return extension.lower() in supported_extensions
 
 
-def get_record_filenames(dirname):
-    filenames = []
-    for (dirpath, dirnames, _filenames) in walk(dirname):
-        filenames.extend([join(dirpath, f) for f in _filenames if is_record(f)])
-    return filenames
+def get_record_filepaths(dirname):
+    filepaths = []
+    for (dirpath, dirnames, filenames) in walk(dirname):
+        filepaths.extend([join(dirpath, f) for f in filenames if is_record(f)])
+    return filepaths
 
 
 def load_csv():

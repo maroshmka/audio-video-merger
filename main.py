@@ -1,29 +1,14 @@
 import argparse
 import logging
-from datetime import datetime
 from os import mkdir
-from os.path import dirname, join, isdir, isfile
+from os.path import dirname, join, isdir
 
-from loader import DateBasedOrganizer, get_record_filenames
+from loader import DateBasedOrganizer, get_record_filepaths
 from merge import move_files, copy_files
-from util import load_config, inject_config_if_missing
+from util import load_config, inject_config_if_missing, setup_logger
 
 # Setup logging
-if not isdir('log'):
-    mkdir('log')
-log_filename = 'log/{}.log'.format(datetime.now().isoformat(timespec='minutes'))
-
-file_handler = logging.FileHandler(log_filename)
-file_handler.setLevel(logging.DEBUG)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s [%(name)-10.10s] [%(levelname)-7.7s]  %(message)s',
-                    handlers=[file_handler, console_handler])
-
-logger = logging.getLogger(__name__)
+logger = setup_logger(logging, __name__)
 
 
 # Main function
@@ -35,8 +20,8 @@ def run(video_dir, audio_dir, output_dir=None, move=False):
 
     logger.info('Prehladavam zlozky ktore si zadal...')
 
-    files = get_record_filenames(video_dir)
-    files.extend( get_record_filenames(audio_dir) )
+    files = get_record_filepaths(video_dir)
+    files.extend( get_record_filepaths(audio_dir) )
 
     logger.info('Nasiel som %d nahravok. (konkretne mas v logu)' % len(files))
     logger.debug('Najdene nahravky:\n%s' % '\n'.join(files))

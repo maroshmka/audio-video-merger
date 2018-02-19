@@ -33,8 +33,8 @@ def merge_audio_video(combinations, video_files_path):
         shutil.move(video_path, new_video_path)
 
 
-def makedirs_if_needed(filename):
-    dirname = os.path.dirname(filename)
+def makedirs_if_needed(filepath):
+    dirname = os.path.dirname(filepath)
     if not os.path.exists(dirname):
         try:
             os.makedirs(dirname)

@@ -5,14 +5,14 @@ import re
 from datetime import datetime
 
 
-def get_duration_in_sec(filename):
+def get_duration_in_sec(filepath):
     """
     Valid for any audio file accepted by ffprobe.
     Smoke tested on formats
       audio: .aiff .mp3 .wav
       video: .avi .mp4 .webm
     """
-    args = ("ffprobe", "-show_entries", "format=duration", "-i", filename)
+    args = ("ffprobe", "-show_entries", "format=duration", "-i", filepath)
     popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, err = popen.communicate()
 
@@ -26,15 +26,15 @@ def get_duration_in_sec(filename):
 
 
 # !!! Cannot use create date: https://www.infonautics.ch/blog/how-to-correct-wrong-file-dates/
-def get_creation_time_in_sec(filename):
+def get_creation_time_in_sec(filepath):
     """
     Try to get creation time of file, on fail
     get last modified.
     """
     if platform.system() == 'Windows':
-        return os.path.getctime(filename)
+        return os.path.getctime(filepath)
     else:
-        stat = os.stat(filename)
+        stat = os.stat(filepath)
         try:
             return stat.st_birthtime
         except AttributeError:
@@ -49,24 +49,24 @@ class NoEncodedDateException(Exception):
 
 
 # See https://mediaarea.net/en/MediaInfo
-def get_encoded_date_in_sec(filename):
+def get_encoded_date_in_sec(filepath):
     """
     Use mediainfo to get Encoded date if present in file.
     :return:
     """
-    args = ("mediainfo", filename)
+    args = ("mediainfo", filepath)
     popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, err = popen.communicate()
 
     if type(output) == bytes:
         output = output.decode("utf-8")
     if output == '\n':
-        raise FileNotFoundError('File \'%s\' not found!' % filename)
+        raise FileNotFoundError('File \'%s\' not found!' % filepath)
 
     match = re.search(r"Encoded date *: (?:[A-Z]+ )?(.*)\n", output)
 
     if match is None:
-        raise Exception('File does not contain Encoded date info!')
+        raise NoEncodedDateException('File does not contain Encoded date info!')
 
     return datetime.strptime(match.group(1), '%Y-%m-%d %H:%M:%S').timestamp()
 
@@ -80,15 +80,32 @@ def load_config():
         return config
 
 
-def inject_config_if_missing(args, config, config_name, logger):
-    if getattr(args, config_name) is None:
-        if (config_name not in config.keys()) or \
-                (config[config_name] == '') or \
-                (config[config_name][0] == '<'):
-            logger.error('Nastav \'%s\' ty baran!' % config_name)
+def inject_config_if_missing(args, config, config_var_name, logger):
+    if getattr(args, config_var_name) is None:
+        if (config_var_name not in config.keys()) or \
+                (config[config_var_name] == '') or \
+                (config[config_var_name][0] == '<'):
+            logger.error('Nastav \'%s\' ty baran!' % config_var_name)
             exit(1)
-        setattr(args, config_name, config[config_name])
+        setattr(args, config_var_name, config[config_var_name])
 
+
+def setup_logger(_logging, logger_name):
+    if not os.path.isdir('log'):
+        os.mkdir('log')
+    log_filepath = 'log/{}.log'.format(datetime.now().isoformat(timespec='minutes'))
+
+    file_handler = _logging.FileHandler(log_filepath)
+    file_handler.setLevel(_logging.DEBUG)
+
+    console_handler = _logging.StreamHandler()
+    console_handler.setLevel(_logging.INFO)
+
+    _logging.basicConfig(level=_logging.DEBUG,
+                        format='%(asctime)s [%(name)-10.10s] [%(levelname)-7.7s]  %(message)s',
+                        handlers=[file_handler, console_handler])
+
+    return _logging.getLogger(logger_name)
 
 
 # NOTE: When labeling of records will be decided
