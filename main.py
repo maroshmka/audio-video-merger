@@ -71,5 +71,6 @@ if __name__ == '__main__':
     inject_config_if_missing(args, config, 'video_dir', logger)
     inject_config_if_missing(args, config, 'audio_dir', logger)
     inject_config_if_missing(args, config, 'output_dir', logger)
+    inject_config_if_missing(args, config, 'move', logger)
 
     run(args.video_dir, args.audio_dir, args.output_dir, args.move)
