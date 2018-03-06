@@ -24,15 +24,15 @@ def run(video_dir, audio_dir, output_dir=None, move=False):
     files.extend( get_record_filepaths(audio_dir) )
 
     logger.info('Nasiel som %d nahravok. (konkretne mas v logu)' % len(files))
-    logger.debug('Najdene nahravky:\n%s' % '\n'.join(files))
+    logger.info('Najdene nahravky:\n%s' % '\n'.join(files))
 
     logger.info('Skupinkujem ti nahravky...')
 
     organizer = DateBasedOrganizer()
     dest_paths = organizer.get_dest_paths(files, output_dir)
 
-    logger.debug('Takto premiestnim/zkopirujem nahravky:\n')
-    logger.debug('\n'.join(['\'%s\' -> \'%s\'' % mapping for mapping in dest_paths.items()]))
+    logger.info('Takto premiestnim/zkopirujem nahravky:\n')
+    logger.info('\n'.join(['\'%s\' -> \'%s\'' % mapping for mapping in dest_paths.items()]))
 
     if move:
         move_files(dest_paths)
@@ -42,7 +42,7 @@ def run(video_dir, audio_dir, output_dir=None, move=False):
 
 # Arguments handling
 if __name__ == '__main__':
-    logger.debug('Asi budes zmäteny z toho ze raz pisem po slovensky'
+    logger.info('Asi budes zmäteny z toho ze raz pisem po slovensky'
                  'a raz po anglicky. Nezufaj!')
     parser = argparse.ArgumentParser()
     parser.add_argument('video_dir', type=str, nargs='?',

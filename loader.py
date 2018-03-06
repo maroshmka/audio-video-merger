@@ -135,16 +135,16 @@ class DateBasedOrganizer:
         """
         assert isdir(output_dir)
 
-        logger.debug('Sorting records based on creation time...')
+        logger.info('Sorting records based on creation time...')
 
         records = self._create_sorted_records(record_files)
 
-        logger.debug('Grouping records into groups based '
+        logger.info('Grouping records into groups based '
                      'on recording time overlap...')
 
         record_groups = self._group_records(records)
 
-        logger.debug('Generating destination filepaths for records...')
+        logger.info('Generating destination filepaths for records...')
 
         dest_paths = self._generate_dest_paths(record_groups, output_dir)
 
