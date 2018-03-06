@@ -93,7 +93,9 @@ def inject_config_if_missing(args, config, config_var_name, logger):
 def setup_logger(_logging, logger_name):
     if not os.path.isdir('log'):
         os.mkdir('log')
-    log_filepath = 'log/{}.log'.format(datetime.now().isoformat(timespec='minutes'))
+
+    log_filename = '{}.log'.format(datetime.now().isoformat(timespec='minutes'))
+    log_filepath = os.path.join('log', log_filename)
 
     file_handler = _logging.FileHandler(log_filepath)
     file_handler.setLevel(_logging.DEBUG)
