@@ -68,7 +68,11 @@ def get_encoded_date_in_sec(filepath):
     if match is None:
         raise NoEncodedDateException('File does not contain Encoded date info!')
 
-    return datetime.strptime(match.group(1), '%Y-%m-%d %H:%M:%S').timestamp()
+    encoded_date_str = match.group(1).strip()
+
+    encoded_date = datetime.strptime(encoded_date_str, '%Y-%m-%d %H:%M:%S').timestamp()
+
+    return encoded_date
 
 
 def load_config():
