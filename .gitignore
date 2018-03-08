@@ -111,7 +111,14 @@ data
 *.out
 spark-warehouse
 
+# test results
 results
+
+# config
 config.txt
+
+# logs
+/log
+
 .DS_STORE
 
