@@ -1,3 +1,3 @@
-video_dir=tests/data/video
-audio_dir=tests/data/audio
-output_dir=tests/results
+video_dir=C:\Users\kostan-v\Documents\test_dataset\video
+audio_dir=C:\Users\kostan-v\Documents\test_dataset\audio
+output_dir=C:\Users\kostan-v\Documents\test_dataset\output

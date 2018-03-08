@@ -112,6 +112,6 @@ data
 spark-warehouse
 
 results
-.config
+config.txt
 .DS_STORE
 
