@@ -178,7 +178,11 @@ def is_record(file):
 def get_record_filepaths(dirname):
     filepaths = []
     for (dirpath, dirnames, filenames) in walk(dirname):
-        filepaths.extend([join(dirpath, f) for f in filenames if is_record(f)])
+        for f in filenames:
+            if is_record(f):
+                filepaths.append(join(dirpath, f))
+            else:
+                logger.warning('Skipping \'%s\'! Not supported file extension!' % f)
     return filepaths
 
 
