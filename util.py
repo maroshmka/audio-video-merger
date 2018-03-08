@@ -116,6 +116,11 @@ def setup_logger(_logging, logger_name):
         os.mkdir('log')
 
     log_filename = '{}.log'.format(datetime.now().isoformat(timespec='minutes'))
+
+    if os.name == 'nt':     # If Windows
+        log_filename = log_filename.replace('/', '-')
+        log_filename = log_filename.replace(':', '-')
+
     log_filepath = os.path.join('log', log_filename)
 
     file_handler = _logging.FileHandler(log_filepath)
