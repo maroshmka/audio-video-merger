@@ -5,7 +5,7 @@ from os.path import dirname, join, isdir
 
 from loader import DateBasedOrganizer, get_record_filepaths
 from merge import move_files, copy_files
-from util import load_config, inject_config_if_missing, setup_logger
+from util import load_config, inject_config_if_missing, setup_logger, check_third_party
 
 # Setup logging
 logger = setup_logger(logging, __name__)
@@ -44,6 +44,9 @@ def run(video_dir, audio_dir, output_dir=None, move=False):
 if __name__ == '__main__':
     logger.debug('Asi budes zmäteny z toho ze raz pisem po slovensky'
                  'a raz po anglicky. Nezufaj!')
+
+    check_third_party()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('video_dir', type=str, nargs='?',
                         help='Toto je zlozka kde mas videjka.')

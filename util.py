@@ -5,6 +5,23 @@ import re
 from datetime import datetime
 
 
+class ThirdPartyMissing(Exception):
+    pass
+
+
+def _check_in_cli(command):
+    try:
+        args = (command)
+        popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        raise ThirdPartyMissing('Zabudol si nainstalovat %s! Pozri README.md.' % command)
+
+
+def check_third_party():
+    _check_in_cli("mediainfo")
+    _check_in_cli("ffprobe")
+
+
 def get_duration_in_sec(filepath):
     """
     Valid for any audio file accepted by ffprobe.

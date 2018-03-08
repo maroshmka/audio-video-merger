@@ -8,6 +8,7 @@ based on time they were recorded.
 In order to install you need following:
 * `Python 3`
 * `mediainfo`
+* `ffmpeg`
 * `tqdm` library (optional for progress bar)
 
 ### Python 3
@@ -16,12 +17,21 @@ In order to install you need following:
 * Download latest Python 3
 * Install it
 
-### Mediainfo
+### Mediainfo (Windows guide)
 
 * Go to https://mediaarea.net/en/MediaInfo/Download
 * Choose you OS
 * Download `CLI` version for your architecture
-* Install it
+* Unzip contents to `MEDIAINFO_ROOT`.
+* Add `MEDIAINFO_ROOT` to your `Path` environment variable.
+* Done.
+
+### Ffmpeg (Windows guide)
+
+* Head on over to http://ffmpeg.zeranoe.com/builds/ and download either the 32 or 64-bit Static version (depending on your system). 
+* Unzip `<ffmpeg_dir>` inside zip to  `DESTINATION_PATH` (and rename it if you will).
+* Add `DESTINATION_PATH\<ffmpeg_dir>\bin` to your `Path` environment variable.
+* Done.
 
 ### tqdm (optional)
 
