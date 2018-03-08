@@ -161,7 +161,7 @@ supported_extensions = {
     '.aiff', '.ape', '.au', '.flac', '.m4a', '.mp3', '.mpc',
     '.pcm', '.raw', '.wav', '.wma', '.wv',
     '.avi', '.m4v', '.m4p', '.mp2', '.mp4', '.mpg', '.mpeg',
-    '.mkv', '.mov', '.rw2', '.webm', '.wmv'
+    '.mkv', '.mov', '.webm', '.wmv'
 }
 
 
