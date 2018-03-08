@@ -49,18 +49,24 @@ class DateBasedOrganizer:
                 creation_time = get_encoded_date_in_sec(filepath)
             except NoEncodedDateException:
                 logger.warning('Using \"creation / last modified '
-                               'time\" for file \'%s\'!\n'
+                               'time\" for file \'%s\'! '
                                'Reason: The file does not contain \"Encoded'
-                               ' Date\" metadata!\n')
+                               ' Date\" metadata!' % filepath)
                 creation_time = get_creation_time_in_sec(filepath)
             except FileNotFoundError as e:
                 logger.error(str(e))
                 creation_time = None
-            finally:
-                if creation_time is not None:
+
+            if creation_time is not None:
+                try:
                     record = self.Record(filepath, creation_time,
                                          get_duration_in_sec(filepath))
                     records.append(record)
+                except Exception as ex:
+                    logger.debug(str(ex))
+                    logger.warning('Skipping \'%s\' !' % filepath)
+            else:
+                logger.warning('Skipping \'%s\' !' % filepath)
 
         records = sorted(records, key=lambda rec: rec.creation_time)
 
