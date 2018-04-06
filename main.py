@@ -34,7 +34,6 @@ def run(video_dir, audio_dir, output_dir=None, move=False):
     logger.debug('Takto premiestnim/zkopirujem nahravky:\n')
     logger.debug('\n'.join(['\'%s\' -> \'%s\'' % mapping for mapping in dest_paths.items()]))
 
-    return
     if move:
         move_files(dest_paths)
     else:
